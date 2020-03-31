@@ -2,15 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
-ROLE_CHOICES = (
-    ('si', 'simple'),
-    ('rd', 'redacteur'),
-    ('md', 'moderateur'),
-    ('ad', 'admin')
-)
-
-
-
 class UtilisateurManager(BaseUserManager):
     def create(self, email, nomUtilisateur, password=None):
         if not email:
@@ -65,26 +56,3 @@ class compteUtilisateur(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
-
-
-class role(models.Model):
-    idRole                          = models.AutoField(primary_key=True, editable=False)
-    idUtilisateurR                  = models.ForeignKey(compteUtilisateur, on_delete=models.CASCADE, verbose_name='utilisateur')
-    Type                            = models.CharField(max_length=2, choices=ROLE_CHOICES)
-
-    def __str__(self):
-        return self.get_Type_display() + ':' + self.idUtilisateurR.nomUtilisateur
-
-
-class infoPersonel(models.Model):
-    idInfoPer                       = models.AutoField(primary_key=True, editable=False)
-    idUtilisateurIp                 = models.OneToOneField(compteUtilisateur, on_delete=models.CASCADE, verbose_name='utilisateur')
-    nom                             = models.CharField(max_length=50)
-    prenom                          = models.CharField(max_length=50)
-    dateNaissance                   = models.DateField(verbose_name='Date de naissance')
-    wilaya                          = models.CharField(max_length=30)
-
-    class Meta:
-        verbose_name_plural = 'Infos Personnelles'
-    def __str__(self):
-        return 'Infos de: ' + self.idUtilisateurIp.nomUtilisateur
